@@ -1,0 +1,66 @@
+const mongoose = require('mongoose');
+
+const InvestmentInquirySchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Please provide your name'],
+    trim: true,
+    maxlength: [50, 'Name cannot be more than 50 characters']
+  },
+  email: {
+    type: String,
+    required: [true, 'Please provide your email'],
+    match: [
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      'Please provide a valid email'
+    ],
+    trim: true
+  },
+  phone: {
+    type: String,
+    required: [true, 'Please provide your phone number'],
+    trim: true
+  },
+  investmentInterest: {
+    type: String,
+    enum: ['residential', 'commercial', 'mixed-use', 'land'],
+    required: [true, 'Please select an investment interest']
+  },
+  message: {
+    type: String,
+    required: [true, 'Please provide your investment goals'],
+    trim: true
+  },
+  documents: [{
+    type: String,
+    default: []
+  }],
+  status: {
+    type: String,
+    enum: ['pending', 'reviewed', 'contacted', 'closed'],
+    default: 'pending'
+  },
+  adminResponse: {
+    text: {
+      type: String,
+      default: ''
+    },
+    images: [{
+      type: String,
+      default: []
+    }],
+    respondedAt: {
+      type: Date
+    },
+    respondedBy: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User'
+    }
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+module.exports = mongoose.model('InvestmentInquiry', InvestmentInquirySchema);
