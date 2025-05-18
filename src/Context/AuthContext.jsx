@@ -13,8 +13,10 @@ export const AuthProvider = ({ children }) => {
   const api = axios.create({
     baseURL: 'https://orus-home.onrender.com/api/auth',
     headers: {
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
+    // Enable sending cookies across domains if needed
+    withCredentials: true
   });
 
   // Add response interceptor for handling token-related errors
@@ -51,10 +53,14 @@ export const AuthProvider = ({ children }) => {
 
   // Process error messages
   const processErrorMessage = (error) => {
+    console.error('API Error:', error); // Enhanced error logging
+    
     if (error.response?.data?.message) {
       return error.response.data.message;
     } else if (error.response?.status === 401) {
       return 'Authentication failed. Please log in again.';
+    } else if (error.response?.status === 0 && error.message.includes('Network Error')) {
+      return 'Network error. This might be due to CORS policy restrictions.';
     } else if (error.response) {
       return `Server error: ${error.response.status}`;
     } else if (error.request) {
@@ -83,6 +89,9 @@ export const AuthProvider = ({ children }) => {
       setLoading(true);
       setError(null);
 
+      // Log the request being made
+      console.log('Attempting login request to:', api.defaults.baseURL + '/login');
+      
       const response = await api.post('/login', { email, password });
       const { token, user } = response.data;
 
