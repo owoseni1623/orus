@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import './COFOAdminDashboard.css';
 
 // API base URL configuration
-axios.defaults.baseURL = 'http://localhost:3000';
+axios.defaults.baseURL = 'https://orus-home.onrender.com';
 
 // Enhanced Modal Component
 const Modal = ({ isOpen, onClose, children }) => {

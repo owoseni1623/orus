@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import './SurveyDocumentsPage.css';
 
-axios.defaults.baseURL = 'http://localhost:3000';
+axios.defaults.baseURL = 'https://orus-home.onrender.com';
 
 // Icons (you can replace with actual SVG imports)
 const icons = {

@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
 
   // Create axios instance with base configuration
   const api = axios.create({
-    baseURL: 'http://localhost:3000/api/auth',
+    baseURL: 'https://orus-home.onrender.com/api/auth',
     headers: {
       'Content-Type': 'application/json'
     }

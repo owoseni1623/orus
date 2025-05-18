@@ -19,7 +19,7 @@ const InvestmentInquiryAdmin = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const fileInputRef = useRef(null);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  const API_URL = import.meta.env.VITE_API_URL || 'https://orus-home.onrender.com';
 
   useEffect(() => {
     fetchInquiries();
@@ -66,7 +66,7 @@ const InvestmentInquiryAdmin = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-    debugImagePaths(inquiry); // Add this line
+    debugImagePaths(inquiry);
   };
 
   const handleResponseChange = (e) => {

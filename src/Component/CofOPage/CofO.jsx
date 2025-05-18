@@ -3,7 +3,7 @@ import axios from 'axios';
 import './CofO.css';
 
 // Set default axios config
-axios.defaults.baseURL = 'http://localhost:3000';
+axios.defaults.baseURL = 'https://orus-home.onrender.com';
 
 // Axios interceptor to add authorization header
 axios.interceptors.request.use(

@@ -6,7 +6,7 @@ import axios from 'axios';
 const AdvancedPropertyCard = ({ property, onDetailView, onContactClick, onCheckoutClick, isAdmin, onEdit, onDelete, onToggleAvailability }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://orus-home.onrender.com';
 
   const DEFAULT_PLACEHOLDER = '/src/assets/placeholder-property.jpg';
 
@@ -169,7 +169,7 @@ const HomeSelling = () => {
     location: ''
   });
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://orus-home.onrender.com';
 
   useEffect(() => {
     const token = localStorage.getItem('token');
