@@ -36,7 +36,7 @@ export const CartProvider = ({ children }) => {
       try {
         setLoading(true);
         setError(null);
-        // Ensure we're using the correct API URL with /cart path
+        // Fix: Use API_URL directly as it already includes the /api prefix
         const response = await axios.get(`${API_URL}/cart`, getAuthHeader());
         const items = response.data?.data?.items || [];
         setCartItems(items);
