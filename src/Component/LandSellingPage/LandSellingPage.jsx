@@ -6,7 +6,7 @@ import './LandSellingPage.css';
 const LandCard = ({ land, onDetailView, onInquiryClick, isAdmin, onEdit, onDelete, onToggleAvailability }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://orus-home.onrender.com';
   
   const DEFAULT_PLACEHOLDER = '/src/assets/placeholder-property.jpg';
 
@@ -28,7 +28,7 @@ const LandCard = ({ land, onDetailView, onInquiryClick, isAdmin, onEdit, onDelet
       .split('/').pop(); // Get the actual filename
     
     // Construct the full URL
-    return `${API_BASE_URL.replace('/api', '')}/uploads/lands/${encodeURIComponent(filename)}`;
+    return `${API_BASE_URL.replace('/api', '')}/api/uploads/lands/${encodeURIComponent(filename)}`;
   };
   
 
@@ -156,7 +156,7 @@ const LandSellingPage = () => {
     size: ''
   });
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://orus-home.onrender.com';
   const DEFAULT_PLACEHOLDER = '/src/assets/placeholder-property.jpg';
 
   useEffect(() => {
@@ -175,7 +175,7 @@ const LandSellingPage = () => {
         config.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
       }
 
-      const response = await axios.get(`${API_BASE_URL}/lands`, config);
+      const response = await axios.get(`${API_BASE_URL}/api/lands`, config);
       setProperties(response.data);
       setLoading(false);
     } catch (err) {
@@ -196,7 +196,7 @@ const LandSellingPage = () => {
     try {
       setLoading(true);
       const queryString = new URLSearchParams(updatedParams).toString();
-      const response = await axios.get(`${API_BASE_URL}/lands/search?${queryString}`);
+      const response = await axios.get(`${API_BASE_URL}/api/lands/search?${queryString}`);
       setProperties(response.data);
     } catch (err) {
       setError('Error searching properties. Please try again.');
@@ -213,7 +213,7 @@ const LandSellingPage = () => {
   const handleDelete = async (landId) => {
     if (window.confirm('Are you sure you want to delete this land property?')) {
       try {
-        await axios.delete(`${API_BASE_URL}/lands/${landId}`, {
+        await axios.delete(`${API_BASE_URL}/api/lands/${landId}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -228,7 +228,7 @@ const LandSellingPage = () => {
   const handleToggleAvailability = async (land) => {
     try {
       await axios.put(
-        `${API_BASE_URL}/lands/${land._id}`,
+        `${API_BASE_URL}/api/lands/${land._id}`,
         {
           ...land,
           isAvailable: !land.isAvailable
@@ -263,7 +263,7 @@ const LandSellingPage = () => {
           .split('/').pop(); // Get the actual filename
         
         // Construct full URL
-        return `${API_BASE_URL.replace('/api', '')}/uploads/lands/${filename}`;
+        return `${API_BASE_URL.replace('/api', '')}/api/uploads/lands/${filename}`;
       }) || []
     };
     
