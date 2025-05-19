@@ -18,7 +18,8 @@ const AdvancedPropertyCard = ({ property, onDetailView, onContactClick, onChecko
     }
     
     const filename = imagePath.split(/[\/\\]/).pop();
-    const url = `${API_BASE_URL.replace('/api', '')}/uploads/properties/${filename}`;
+    // Fixed: Make sure we're accessing the correct uploads path (with /uploads directly)
+    const url = `${API_BASE_URL}/uploads/properties/${filename}`;
     console.log('Constructed image URL:', url);
     return url;
   };
@@ -188,7 +189,8 @@ const HomeSelling = () => {
         config.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
       }
 
-      const response = await axios.get(`${API_BASE_URL}/properties`, config);
+      // FIXED: Adding /api prefix to properties endpoint
+      const response = await axios.get(`${API_BASE_URL}/api/properties`, config);
       console.log('API Response:', response.data);
       
       setProperties(response.data);
@@ -207,7 +209,8 @@ const HomeSelling = () => {
   const handleDelete = async (propertyId) => {
     if (window.confirm('Are you sure you want to delete this property?')) {
       try {
-        await axios.delete(`${API_BASE_URL}/properties/${propertyId}`, {
+        // FIXED: Adding /api prefix to properties endpoint
+        await axios.delete(`${API_BASE_URL}/api/properties/${propertyId}`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -221,8 +224,9 @@ const HomeSelling = () => {
 
   const handleToggleAvailability = async (property) => {
     try {
+      // FIXED: Adding /api prefix to properties endpoint
       await axios.put(
-        `${API_BASE_URL}/properties/${property._id}`,
+        `${API_BASE_URL}/api/properties/${property._id}`,
         {
           ...property,
           isAvailable: !property.isAvailable
@@ -249,7 +253,8 @@ const HomeSelling = () => {
           return imagePath;
         }
         const filename = imagePath.split(/[\/\\]/).pop();
-        return `${API_BASE_URL.replace('/api', '')}/uploads/properties/${filename}`;
+        // FIXED: Ensure we're accessing the uploads directory directly without replacing /api
+        return `${API_BASE_URL}/uploads/properties/${filename}`;
       })
     };
     setSelectedProperty(processedProperty);
@@ -287,8 +292,9 @@ const HomeSelling = () => {
     try {
       setLoading(true);
       const queryString = new URLSearchParams(updatedParams).toString();
+      // FIXED: Adding /api prefix to properties/search endpoint
       const response = await axios.get(
-        `${API_BASE_URL}/properties/search?${queryString}`
+        `${API_BASE_URL}/api/properties/search?${queryString}`
       );
       setProperties(response.data);
     } catch (err) {
@@ -302,7 +308,8 @@ const HomeSelling = () => {
   const handleSubmitContact = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${API_BASE_URL}/inquiries`, contactForm);
+      // FIXED: Adding /api prefix to inquiries endpoint
+      await axios.post(`${API_BASE_URL}/api/inquiries`, contactForm);
       alert('Inquiry submitted successfully!');
       setContactForm({
         name: '',
