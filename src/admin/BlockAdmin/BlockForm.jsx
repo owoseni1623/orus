@@ -140,7 +140,7 @@ const BlockForm = () => {
     setLoading(true);
   
     try {
-      const endpoint = `${API_URL}/blocks${id ? `/${id}` : ''}`;
+      const endpoint = `${API_URL}/api/blocks${id ? `/${id}` : ''}`;
       const method = id ? 'put' : 'post';
       
       // Clean up empty values in arrays

@@ -147,6 +147,15 @@ const SurveyAdminDashboard = () => {
     }
   };
 
+  // Get proper image URL with error handling
+  const getImageUrl = (imageName) => {
+    if (!imageName) return null;
+    
+    // Make sure the image path is correctly formatted
+    const cleanPath = imageName.replace(/^uploads[\/\\]/, '');
+    return `/uploads/surveys/${cleanPath}`;
+  };
+
   // Filter surveys based on status
   const filteredSurveys = Array.isArray(surveys)
     ? (statusFilter === 'all' 
@@ -295,34 +304,58 @@ const SurveyAdminDashboard = () => {
               <div className="detail-item">
                 <strong>Submitted:</strong> {new Date(selectedSurvey.createdAt).toLocaleString()}
               </div>
+              
+              {/* Survey Images */}
               {selectedSurvey.images?.length > 0 && (
-                <div className="survey-images">
+                <div className="survey-images full-width">
                   <h3>Uploaded Images</h3>
                   <div className="image-grid">
                     {selectedSurvey.images.map((image, index) => (
-                      <img
-                        key={index}
-                        src={`/uploads/surveys/${image}`}
-                        alt={`Survey image ${index + 1}`}
-                        className="survey-image"
-                      />
+                      <div key={index} className="image-container">
+                        <img
+                          src={getImageUrl(image)}
+                          alt={`Survey image ${index + 1}`}
+                          className="survey-image"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = '/api/placeholder/300/300';
+                            console.log(`Failed to load image: ${image}`);
+                          }}
+                        />
+                      </div>
                     ))}
                   </div>
                 </div>
               )}
-              {selectedSurvey.adminReply?.images?.length > 0 && (
-                <div className="reply-images">
-                  <h3>Reply Images</h3>
-                  <div className="image-grid">
-                    {selectedSurvey.adminReply.images.map((image, index) => (
-                      <img
-                        key={index}
-                        src={`/uploads/surveys/${image}`}
-                        alt={`Reply image ${index + 1}`}
-                        className="reply-image"
-                      />
-                    ))}
-                  </div>
+              
+              {/* Reply section if exists */}
+              {selectedSurvey.adminReply?.message && (
+                <div className="admin-reply full-width">
+                  <h3>Admin Reply</h3>
+                  <p>{selectedSurvey.adminReply.message}</p>
+                  
+                  {/* Reply Images */}
+                  {selectedSurvey.adminReply.images?.length > 0 && (
+                    <div className="reply-images">
+                      <h4>Reply Images</h4>
+                      <div className="image-grid">
+                        {selectedSurvey.adminReply.images.map((image, index) => (
+                          <div key={index} className="image-container">
+                            <img
+                              src={getImageUrl(image)}
+                              alt={`Reply image ${index + 1}`}
+                              className="reply-image"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = '/api/placeholder/300/300';
+                                console.log(`Failed to load reply image: ${image}`);
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -360,6 +393,9 @@ const SurveyAdminDashboard = () => {
                 max="10"
               />
               <div className="selected-files">
+                {replyImages.length > 0 && (
+                  <p>{replyImages.length} {replyImages.length === 1 ? 'image' : 'images'} selected</p>
+                )}
                 {replyImages.map((file, index) => (
                   <div key={index} className="selected-file">
                     {file.name}
@@ -398,6 +434,12 @@ const SurveyAdminDashboard = () => {
                 {submitStatus.loading ? 'Sending...' : 'Send Reply'}
               </button>
             </div>
+            
+            {submitStatus.error && (
+              <div className="error-message">
+                {submitStatus.error}
+              </div>
+            )}
           </div>
         )}
       </Modal>

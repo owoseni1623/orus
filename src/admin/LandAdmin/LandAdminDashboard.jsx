@@ -42,7 +42,7 @@ const LandAdminDashboard = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/lands`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/lands`, {
         withCredentials: true,
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

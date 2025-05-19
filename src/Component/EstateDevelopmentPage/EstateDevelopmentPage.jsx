@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './EstateDevelopmentPage.css';
 
+// Import images correctly for Vite
+import estateImage from '../../../public/Images/real estate.jpg';
+import parkImage from '../../../public/Images/park2.jpg';
+
 const API_URL = import.meta.env.VITE_API_URL || 'https://orus-home.onrender.com';
 
 // Estate Development Data
@@ -72,7 +76,7 @@ const featuredProjects = [
     investment: "₦2.5 Billion",
     roi: "12-15% Annual Return",
     status: "In Development",
-    image: "/Images/estate.jpg"
+    image: estateImage  // Use the imported image reference
   },
   {
     id: 2,
@@ -83,7 +87,7 @@ const featuredProjects = [
     investment: "₦4.7 Billion",
     roi: "15-18% Annual Return",
     status: "Planning Stage",
-    image: "/Images/park0.png"
+    image: parkImage  // Use the imported image reference
   }
 ];
 
@@ -182,7 +186,7 @@ const EstateDevelopmentPage = () => {
 
       // Submit the data using the defined API_URL
       const response = await axios.post(
-        `${API_URL}/investment-inquiries`,
+        `${API_URL}/api/investment-inquiries`,
         formDataToSend,
         {
           headers: {
@@ -291,19 +295,66 @@ const EstateDevelopmentPage = () => {
         </div>
 
         {selectedProject && (
-          <div className="project-modal">
-            <div className="modal-content">
-              <span className="close-modal" onClick={() => setSelectedProject(null)}>×</span>
+          <div className="project-modal" style={{
+            display: 'flex',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.7)',
+            zIndex: 1000,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+            <div className="modal-content" style={{
+              backgroundColor: 'white',
+              padding: '20px',
+              borderRadius: '5px',
+              maxWidth: '800px',
+              width: '90%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              position: 'relative'
+            }}>
+              <span 
+                className="close-modal" 
+                onClick={() => setSelectedProject(null)}
+                style={{
+                  position: 'absolute',
+                  top: '10px',
+                  right: '20px',
+                  fontSize: '30px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer'
+                }}
+              >×</span>
               <h2>{selectedProject.title}</h2>
-              <img src={selectedProject.image} alt={selectedProject.title} />
+              <div style={{ textAlign: 'center', margin: '20px 0' }}>
+                <img 
+                  src={selectedProject.image} 
+                  alt={selectedProject.title} 
+                  style={{ 
+                    maxWidth: '100%', 
+                    maxHeight: '400px',
+                    objectFit: 'cover',
+                    borderRadius: '5px'
+                  }} 
+                />
+              </div>
               <div className="modal-details">
                 <p><strong>Location:</strong> {selectedProject.location}</p>
                 <p><strong>Type:</strong> {selectedProject.type}</p>
                 <p>{selectedProject.description}</p>
-                <div className="investment-details">
-                  <p>Total Investment: {selectedProject.investment}</p>
-                  <p>Projected ROI: {selectedProject.roi}</p>
-                  <p>Current Status: {selectedProject.status}</p>
+                <div className="investment-details" style={{
+                  backgroundColor: '#f9f9f9',
+                  padding: '15px',
+                  borderRadius: '5px',
+                  marginTop: '15px'
+                }}>
+                  <p><strong>Total Investment:</strong> {selectedProject.investment}</p>
+                  <p><strong>Projected ROI:</strong> {selectedProject.roi}</p>
+                  <p><strong>Current Status:</strong> {selectedProject.status}</p>
                 </div>
               </div>
             </div>

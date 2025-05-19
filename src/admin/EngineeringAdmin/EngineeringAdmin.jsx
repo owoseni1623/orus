@@ -173,6 +173,19 @@ const EngineeringAdmin = () => {
     e.stopPropagation();
   };
 
+  // Get image URL with error handling
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    
+    // If the path already includes the full URL or starts with /uploads, use it directly
+    if (imagePath.startsWith('http') || imagePath.startsWith('/uploads')) {
+      return imagePath;
+    }
+    
+    // Otherwise, prepend the uploads path
+    return `/uploads/engineering/${imagePath}`;
+  };
+
   // Custom date formatter to avoid date-fns dependency issues
   const formatDate = (dateString) => {
     try {
@@ -231,8 +244,12 @@ const EngineeringAdmin = () => {
                     {consultation.images.map((image, index) => (
                       <img
                         key={index}
-                        src={`/uploads/engineering/${image}`}
+                        src={getImageUrl(image)}
                         alt={`Project ${index + 1}`}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = '/api/placeholder/200/150';
+                        }}
                         onClick={(e) => e.stopPropagation()}
                       />
                     ))}
@@ -402,8 +419,12 @@ const EngineeringAdmin = () => {
                         {selectedConsultation.images.map((image, index) => (
                           <img
                             key={index}
-                            src={`/uploads/engineering/${image}`}
+                            src={getImageUrl(image)}
                             alt={`Project ${index + 1}`}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = '/api/placeholder/400/300';
+                            }}
                           />
                         ))}
                       </div>
@@ -422,7 +443,7 @@ const EngineeringAdmin = () => {
                               {reply.attachments.map((attachment, idx) => (
                                 <a
                                   key={idx} 
-                                  href={`/uploads/engineering/${attachment}`} 
+                                  href={getImageUrl(attachment)} 
                                   target="_blank" 
                                   rel="noopener noreferrer"
                                   className="eng006-attachment-link"

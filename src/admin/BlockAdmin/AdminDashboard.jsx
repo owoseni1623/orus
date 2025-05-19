@@ -27,7 +27,7 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/blocks`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/blocks`, {
         withCredentials: true,
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -50,7 +50,7 @@ const AdminDashboard = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this block?')) {
       try {
-        await axios.delete(`${import.meta.env.VITE_API_URL}/blocks/${id}`, {
+        await axios.delete(`${import.meta.env.VITE_API_URL}/api/blocks/${id}`, {
           withCredentials: true,
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -75,7 +75,7 @@ const AdminDashboard = () => {
       };
       
       await axios.put(
-        `${import.meta.env.VITE_API_URL}/blocks/${block._id}`,
+        `${import.meta.env.VITE_API_URL}/api/blocks/${block._id}`,
         updatedBlock,
         {
           withCredentials: true,

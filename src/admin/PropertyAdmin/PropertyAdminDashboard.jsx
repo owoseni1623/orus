@@ -30,7 +30,7 @@ const PropertyAdminDashboard = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/properties`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/properties`, {
         withCredentials: true,
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

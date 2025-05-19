@@ -40,7 +40,7 @@ const InvestmentInquiryAdmin = () => {
       setLoading(true);
       const token = localStorage.getItem('token');
       const response = await axios.get(
-        `${API_URL}/investment-inquiries`,
+        `${API_URL}/api/investment-inquiries`,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -112,7 +112,7 @@ const InvestmentInquiryAdmin = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.put(
-        `${API_URL}/investment-inquiries/${inquiryId}/status`,
+        `${API_URL}/api/investment-inquiries/${inquiryId}/status`,
         { status: newStatus },
         {
           headers: {
@@ -148,7 +148,7 @@ const InvestmentInquiryAdmin = () => {
       formData.append('text', editedResponse);
 
       const response = await axios.put(
-        `${API_URL}/investment-inquiries/${selectedInquiry._id}/respond`,
+        `${API_URL}/api/investment-inquiries/${selectedInquiry._id}/respond`,
         formData,
         {
           headers: {
@@ -194,7 +194,7 @@ const InvestmentInquiryAdmin = () => {
       
       const token = localStorage.getItem('token');
       const response = await axios.put(
-        `${API_URL}/investment-inquiries/${selectedInquiry._id}/respond`,
+        `${API_URL}/api/investment-inquiries/${selectedInquiry._id}/respond`,
         formData,
         {
           headers: {
@@ -237,7 +237,7 @@ const InvestmentInquiryAdmin = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.delete(
-        `${API_URL}/investment-inquiries/${inquiryId}`,
+        `${API_URL}/api/investment-inquiries/${inquiryId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
