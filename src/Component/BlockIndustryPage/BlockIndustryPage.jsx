@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { CartContext } from '../../Context/CartContext';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import { API_URL } from '../../config/env';
 import { blockService } from '../../services/blockService';
@@ -32,6 +31,7 @@ const BlockIndustryPage = () => {
   const { addToCart } = useContext(CartContext);
   const [blocks, setBlocks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedBlock, setSelectedBlock] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [searchParams, setSearchParams] = useState({
@@ -49,21 +49,36 @@ const BlockIndustryPage = () => {
   const fetchBlocks = async () => {
     try {
       setLoading(true);
-      const response = await blockService.getBlocks();
+      setError(null);
       
-      const validBlocks = Array.isArray(response.data) 
-        ? response.data.filter(block => block && typeof block === 'object')
-        : [];
-  
-      setBlocks(validBlocks);
+      const response = await blockService.getBlocks();
+      console.log('API Response:', response);
+      
+      // Check for valid data structure - expecting { success, data } format
+      if (response && response.data) {
+        // If data is in response.data.data (common pattern)
+        const blocksData = response.data.data || response.data;
+        
+        const validBlocks = Array.isArray(blocksData) 
+          ? blocksData.filter(block => block && typeof block === 'object')
+          : [];
+    
+        console.log('Valid blocks:', validBlocks);
+        setBlocks(validBlocks);
+      } else {
+        throw new Error('Invalid data format received from API');
+      }
     } catch (error) {
-      console.error('Fetch error:', error);
+      console.error('Fetch blocks error:', error.response?.data || error.message);
+      setError(error.message || 'Failed to fetch blocks');
+      
       toast.error(error.response?.status === 404 
-        ? 'API endpoint not found.' 
+        ? 'Blocks API endpoint not found. Please check server configuration.' 
         : error.response?.status === 429
         ? 'Too many requests. Please wait.'
-        : `Error: ${error.message}`
+        : `Error: ${error.message || 'Failed to load blocks'}`
       );
+      
       setBlocks([]);
     } finally {
       setLoading(false);
@@ -92,7 +107,6 @@ const BlockIndustryPage = () => {
     }
 
     const imageUrl = getImageUrl(block.images[0]);
-    console.log('Loading image:', imageUrl);
 
     return (
       <img 
@@ -100,9 +114,8 @@ const BlockIndustryPage = () => {
         alt={block.title} 
         className="block-image"
         onError={(e) => {
-          console.error('Image load error:', imageUrl);
           e.target.onerror = null;
-          e.target.src = `${API_URL}/placeholder-block.png`;
+          e.target.src = `${API_URL.replace('/api', '')}/placeholder-block.png`;
         }}
         loading="lazy"
         crossOrigin="anonymous"
@@ -193,9 +206,8 @@ const BlockIndustryPage = () => {
           alt={selectedBlock.title} 
           className="main-block-image"
           onError={(e) => {
-            console.error('Modal image load error:', imageUrl);
             e.target.onerror = null;
-            e.target.src = `${API_URL}/placeholder-block.png`;
+            e.target.src = `${API_URL.replace('/api', '')}/placeholder-block.png`;
           }}
           crossOrigin="anonymous"
         />
@@ -306,7 +318,15 @@ const BlockIndustryPage = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return <div className="loading">Loading blocks...</div>;
+  }
+
+  if (error) {
+    return <div className="error-message">
+      <h3>Error loading blocks</h3>
+      <p>{error}</p>
+      <button onClick={fetchBlocks} className="retry-button">Try Again</button>
+    </div>;
   }
 
   return (
@@ -389,21 +409,21 @@ const BlockIndustryPage = () => {
                   <div className="block-info-section">
                     <h3>Product Features</h3>
                     <ul>
-                      {selectedBlock.features.map((feature, index) => (
+                      {selectedBlock.features && selectedBlock.features.map((feature, index) => (
                         <li key={index}>{feature}</li>
                       ))}
                     </ul>
                   </div>
                   <div className="block-info-section">
                     <h3>Technical Specifications</h3>
-                    {Object.entries(selectedBlock.technicalSpecs).map(([key, value]) => (
+                    {selectedBlock.technicalSpecs && Object.entries(selectedBlock.technicalSpecs).map(([key, value]) => (
                       <p key={key}>{key.replace(/([A-Z])/g, ' $1').trim()}: {value}</p>
                     ))}
                   </div>
                   <div className="block-info-section">
                     <h3>Applications</h3>
                     <ul>
-                      {selectedBlock.applications.map((app, index) => (
+                      {selectedBlock.applications && selectedBlock.applications.map((app, index) => (
                         <li key={index}>{app}</li>
                       ))}
                     </ul>
