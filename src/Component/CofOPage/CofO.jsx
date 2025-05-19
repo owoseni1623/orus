@@ -144,96 +144,92 @@ const COFOPage = () => {
   };
 
   const handleFormSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
+  
+  setSubmitStatus({ 
+    loading: true, 
+    success: false, 
+    error: null 
+  });
+
+  // Check if user is authenticated
+  const token = localStorage.getItem('token');
+  if (!token) {
+    setSubmitStatus({
+      loading: false,
+      success: false,
+      error: 'Please login to submit your application'
+    });
+    return;
+  }
+
+  try {
+    // Create FormData object
+    const formDataToSend = new FormData();
     
+    // Append all form fields
+    for (const [key, value] of Object.entries(formData)) {
+      formDataToSend.append(key, value);
+    }
+    
+    // Don't try to parse the token and extract user ID here
+    // The backend will handle user identification from the auth token
+    
+    // Append files
+    files.forEach((file) => {
+      formDataToSend.append('documents', file);
+    });
+
+    // Log the form data for debugging
+    console.log('Form Data Contents:');
+    for (let pair of formDataToSend.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+
+    // Make the API request with the correct headers
+    const response = await axios.post('/api/v1/cofo', formDataToSend, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
     setSubmitStatus({ 
-      loading: true, 
-      success: false, 
+      loading: false, 
+      success: true, 
       error: null 
     });
-  
-    // Check if user is authenticated
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setSubmitStatus({
-        loading: false,
-        success: false,
-        error: 'Please login to submit your application'
-      });
-      return;
-    }
 
-    try {
-      // Create FormData object
-      const formDataToSend = new FormData();
-      
-      // Get user ID from token
-      const tokenData = JSON.parse(atob(token.split('.')[1]));
-      const userId = tokenData.user.id;
-      
-      // Append all form fields
-      for (const [key, value] of Object.entries(formData)) {
-        formDataToSend.append(key, value);
-      }
-      
-      // Append user ID
-      formDataToSend.append('user', userId);
-      
-      // Append files
-      files.forEach((file, index) => {
-        formDataToSend.append('documents', file);
-      });
+    // Reset form
+    setFormData({
+      fullName: '',
+      email: '',
+      phoneNumber: '',
+      propertyLocation: '',
+      propertyType: 'residential',
+      selectedPackage: 'Standard Processing',
+      additionalNotes: ''
+    });
+    setFiles([]);
 
-      // Log the form data for debugging
-      console.log('Form Data Contents:');
-      for (let pair of formDataToSend.entries()) {
-        console.log(pair[0], pair[1]);
-      }
+    alert('COFO application submitted successfully!');
 
-      // Make the API request with the correct headers
-      const response = await axios.post('/api/v1/cofo', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-  
-      setSubmitStatus({ 
-        loading: false, 
-        success: true, 
-        error: null 
-      });
-  
-      // Reset form
-      setFormData({
-        fullName: '',
-        email: '',
-        phoneNumber: '',
-        propertyLocation: '',
-        propertyType: 'residential',
-        selectedPackage: 'Standard Processing',
-        additionalNotes: ''
-      });
-      setFiles([]);
-  
-      alert('COFO application submitted successfully!');
-  
-    } catch (error) {
-      console.error('COFO submission error:', error);
-      
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error || 
-                          error.message ||
-                          'Submission failed. Please try again.';
-      
-      setSubmitStatus({ 
-        loading: false, 
-        success: false, 
-        error: errorMessage
-      });
-  
-      alert(errorMessage);
-    }
-  };
+  } catch (error) {
+    console.error('COFO submission error:', error);
+    
+    const errorMessage = error.response?.data?.message || 
+                        error.response?.data?.error || 
+                        error.message ||
+                        'Submission failed. Please try again.';
+    
+    setSubmitStatus({ 
+      loading: false, 
+      success: false, 
+      error: errorMessage
+    });
+
+    alert(errorMessage);
+  }
+};
 
 
   return (
