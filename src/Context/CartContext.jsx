@@ -37,7 +37,7 @@ export const CartProvider = ({ children }) => {
         setLoading(true);
         setError(null);
         // Fix: Use API_URL directly as it already includes the /api prefix
-        const response = await axios.get(`${API_URL}/cart`, getAuthHeader());
+        const response = await axios.get(`${API_URL}/api/cart`, getAuthHeader());
         const items = response.data?.data?.items || [];
         setCartItems(items);
         syncToLocalStorage(items);
