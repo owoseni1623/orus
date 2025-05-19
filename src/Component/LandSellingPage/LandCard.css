@@ -1,0 +1,242 @@
+.land006-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+  transition: all 0.3s ease;
+  margin-bottom: 24px;
+  cursor: pointer;
+  border: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.land006-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Image container and navigation */
+.land006-image-container {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+}
+
+.land006-main-image {
+  transition: transform 0.4s ease;
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.land006-card:hover .land006-main-image {
+  transform: scale(1.05);
+}
+
+.land006-image-navigation {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.land006-image-navigation button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.land006-image-navigation button:hover {
+  background-color: #ffffff;
+  color: #000;
+  transform: scale(1.1);
+}
+
+/* Details section */
+.land006-details {
+  padding: 16px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.land006-details h3 {
+  font-size: 18px;
+  margin: 0 0 8px 0;
+  color: #333;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.land006-price {
+  font-size: 20px;
+  color: #2a41e8;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+}
+
+.land006-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  color: #717171;
+  font-size: 14px;
+}
+
+.land006-meta span {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Action buttons */
+.land006-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.land006-actions button {
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  border: none;
+  outline: none;
+  text-align: center;
+}
+
+/* Client user buttons */
+.land006-detail-view-btn {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.land006-detail-view-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.land006-inquiry-btn {
+  background-color: #2a41e8;
+  color: white;
+}
+
+.land006-inquiry-btn:hover {
+  background-color: #1f30c7;
+}
+
+/* Admin buttons */
+.land006-edit-btn {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.land006-edit-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.land006-delete-btn {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.land006-delete-btn:hover {
+  background-color: #fecaca;
+}
+
+.land006-availability-btn {
+  font-weight: 500;
+}
+
+.land006-publish {
+  background-color: #ecfdf5;
+  color: #059669;
+}
+
+.land006-publish:hover {
+  background-color: #d1fae5;
+}
+
+.land006-unpublish {
+  background-color: #fffbeb;
+  color: #d97706;
+}
+
+.land006-unpublish:hover {
+  background-color: #fef3c7;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .land006-actions {
+    flex-direction: column;
+  }
+  
+  .land006-actions button {
+    width: 100%;
+  }
+}
+
+/* Grid layout for multiple cards */
+.land006-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+/* Loading state */
+.land006-card.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Badge for featured properties */
+.land006-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(42, 65, 232, 0.9);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  z-index: 1;
+}
+
+/* Status indicator for availability */
+.land006-status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  z-index: 1;
+}
+
+.land006-status.available {
+  background: rgba(5, 150, 105, 0.9);
+}
+
+.land006-status.unavailable {
+  background: rgba(220, 38, 38, 0.9);
+}

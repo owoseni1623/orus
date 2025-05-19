@@ -2,144 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './LandSellingPage.css';
-
-const LandCard = ({ land, onDetailView, onInquiryClick, isAdmin, onEdit, onDelete, onToggleAvailability }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [imageError, setImageError] = useState(false);
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://orus-home.onrender.com';
-  
-  const DEFAULT_PLACEHOLDER = '/src/assets/placeholder-property.jpg';
-
-  const getImageUrl = (imagePath) => {
-    // Remove any extra quotes
-    imagePath = imagePath.replace(/^["']|["']$/g, '');
-
-    if (!imagePath) return DEFAULT_PLACEHOLDER;
-    
-    // If it's a full URL, return as is
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      return imagePath;
-    }
-    
-    // Ensure the image path is clean
-    const filename = imagePath
-      .replace(/^uploads[/\\]/, '') // Remove 'uploads/' or 'uploads\' prefix
-      .replace(/\\/g, '/') // Normalize slashes
-      .split('/').pop(); // Get the actual filename
-    
-    // Construct the full URL
-    return `${API_BASE_URL.replace('/api', '')}/api/uploads/lands/${encodeURIComponent(filename)}`;
-  };
-  
-
-  const handleImageError = (e) => {
-    console.error('Image failed to load:', e.target.src);
-    setImageError(true);
-    e.target.src = DEFAULT_PLACEHOLDER;
-  };
-
-  const cycleImages = (e, direction) => {
-    e.stopPropagation();
-    if (!land.images?.length) return;
-    
-    const landImages = land.images;
-    const newIndex = direction === 'next' 
-      ? (currentImageIndex + 1) % landImages.length
-      : (currentImageIndex - 1 + landImages.length) % landImages.length;
-    setCurrentImageIndex(newIndex);
-    setImageError(false);
-  };
-
-  const currentImageUrl = imageError || !land.images?.length
-    ? DEFAULT_PLACEHOLDER
-    : getImageUrl(land.images[currentImageIndex]);
-
-  const formatPrice = (price) => {
-    try {
-      return new Intl.NumberFormat('en-NG', {
-        style: 'currency',
-        currency: 'NGN'
-      }).format(price);
-    } catch (err) {
-      console.error('Error formatting price:', err);
-      return price;
-    }
-  };
-
-  return (
-    <div className="land006-card" onClick={() => onDetailView(land)}>
-      <div className="land006-image-container">
-        <img 
-          src={currentImageUrl}
-          alt={land.title || 'Land Image'} 
-          className="land006-main-image"
-          onError={handleImageError}
-          style={{
-            objectFit: 'cover', // Ensure image fills container
-            width: '100%',
-            height: '250px', // Fixed height to prevent layout shift
-            minHeight: '250px'
-          }}
-          crossOrigin="anonymous"
-        />
-        {land.images?.length > 1 && !imageError && (
-          <div className="land006-image-navigation">
-            <button onClick={(e) => {
-              e.stopPropagation();
-              setCurrentImageIndex((prev) => 
-                (prev - 1 + land.images.length) % land.images.length
-              );
-              setImageError(false);
-            }}>◀</button>
-            <button onClick={(e) => {
-              e.stopPropagation();
-              setCurrentImageIndex((prev) => 
-                (prev + 1) % land.images.length
-              );
-              setImageError(false);
-            }}>▶</button>
-          </div>
-        )}
-      </div>
-      
-      <div className="land006-details">
-        <h3>{land.title}</h3>
-        <p className="land006-price">{formatPrice(land.price)}</p>
-        <div className="land006-meta">
-          <span>{land.location}</span>
-          <span>{land.area}</span>
-        </div>
-        <div className="land006-actions" onClick={e => e.stopPropagation()}>
-          {isAdmin ? (
-            <>
-              <button onClick={() => onEdit(land)} className="land006-edit-btn">
-                Edit
-              </button>
-              <button onClick={() => onDelete(land._id)} className="land006-delete-btn">
-                Delete
-              </button>
-              <button 
-                onClick={() => onToggleAvailability(land)}
-                className={`land006-availability-btn ${land.isAvailable ? 'land006-unpublish' : 'land006-publish'}`}
-              >
-                {land.isAvailable ? 'Unpublish' : 'Publish'}
-              </button>
-            </>
-          ) : (
-            <>
-              <button onClick={() => onDetailView(land)} className="land006-detail-view-btn">
-                View Details
-              </button>
-              <button onClick={() => onInquiryClick(land)} className="land006-inquiry-btn">
-                Make Inquiry
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
+import LandCard from './LandCard';
 
 const LandSellingPage = () => {
   const navigate = useNavigate();
@@ -245,26 +108,26 @@ const LandSellingPage = () => {
     }
   };
 
+  const getImageUrl = (filename) => {
+    if (!filename) return DEFAULT_PLACEHOLDER;
+    
+    // If it's a full URL, return as is
+    if (filename.startsWith('http://') || filename.startsWith('https://')) {
+      return filename;
+    }
+    
+    // Ensure the filename is clean (no path prefixes)
+    const cleanFilename = filename.split('/').pop();
+    
+    // Construct the full URL directly
+    return `${API_BASE_URL}/api/uploads/lands/${encodeURIComponent(cleanFilename)}`;
+  };
+
   const handleLandDetailView = (land) => {
+    // Process the images to ensure proper URLs
     const processedLand = {
       ...land,
-      images: land.images?.map(imagePath => {
-        if (!imagePath) return DEFAULT_PLACEHOLDER;
-        
-        // If it's a full URL, return as is
-        if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-          return imagePath;
-        }
-        
-        // Normalize path
-        const filename = imagePath
-          .replace(/^uploads[/\\]/, '') // Remove 'uploads/' or 'uploads\' prefix
-          .replace(/\\/g, '/') // Normalize slashes
-          .split('/').pop(); // Get the actual filename
-        
-        // Construct full URL
-        return `${API_BASE_URL.replace('/api', '')}/api/uploads/lands/${filename}`;
-      }) || []
+      images: land.images?.map(filename => getImageUrl(filename)) || []
     };
     
     setSelectedLand(processedLand);
@@ -272,12 +135,13 @@ const LandSellingPage = () => {
   };
 
   const handleProceedToInquiry = (land) => {
-    localStorage.setItem('selectedProperty', JSON.stringify(land));
-    navigate('/checkout');
-  };
-
-  const handleBuyLand = (land) => {
-    localStorage.setItem('selectedProperty', JSON.stringify(land));
+    // Process the land object to ensure proper image URLs before storing
+    const processedLand = {
+      ...land,
+      images: land.images?.map(filename => getImageUrl(filename)) || []
+    };
+    
+    localStorage.setItem('selectedProperty', JSON.stringify(processedLand));
     navigate('/checkout');
   };
 
@@ -382,15 +246,14 @@ const LandSellingPage = () => {
                   alt={selectedLand.title}
                   className="land006-modal-land-image"
                   onError={(e) => {
-                    e.target.src = '/src/assets/placeholder-property.jpg';
+                    e.target.src = DEFAULT_PLACEHOLDER;
                   }}
                   style={{
                     objectFit: 'cover',
                     width: '100%',
-                    height: '400px', // Fixed height
+                    height: '400px',
                     minHeight: '400px'
                   }}
-                  crossOrigin="anonymous"
                 />
                   
                   {selectedLand.images.length > 1 && (
