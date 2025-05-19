@@ -7,9 +7,6 @@ import './CartPage.css';
 const CartPage = () => {
   const { cartItems, removeFromCart, updateQuantity, loading, error } = useContext(CartContext);
   const navigate = useNavigate();
-  
-  // Debug logging
-  console.log('API_URL in CartPage:', API_URL);
 
   const handleQuantityChange = async (itemId, currentQuantity, increment) => {
     const newQuantity = increment ? currentQuantity + 1 : currentQuantity - 1;

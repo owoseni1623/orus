@@ -36,21 +36,12 @@ export const CartProvider = ({ children }) => {
       try {
         setLoading(true);
         setError(null);
-        
-        // Add explicit debug logging to see what URL is being used
-        console.log('API_URL value:', API_URL);
-        const fullUrl = `${API_URL}/cart`;
-        console.log('Making request to:', fullUrl);
-        
-        // Make sure we're using the full URL with /api/cart
-        const response = await axios.get(fullUrl, getAuthHeader());
-        
+        // Fix: Use API_URL directly as it already includes the /api prefix
+        const response = await axios.get(`${API_URL}/cart`, getAuthHeader());
         const items = response.data?.data?.items || [];
         setCartItems(items);
         syncToLocalStorage(items);
       } catch (error) {
-        console.error('Cart fetch error:', error);
-        console.error('Request config:', error.config);
         handleApiError(error);
         const savedCart = localStorage.getItem('cartItems');
         if (savedCart) {
@@ -75,6 +66,7 @@ export const CartProvider = ({ children }) => {
     }
   }, []);
 
+
   const addToCart = async (item) => {
     if (!item?._id && !item?.id) {
       toast.error('Invalid item');
@@ -86,12 +78,8 @@ export const CartProvider = ({ children }) => {
 
     try {
       setError(null);
-      // Ensure we're using the full API URL with /api/cart
-      const fullUrl = `${API_URL}/cart`;
-      console.log('Adding to cart at URL:', fullUrl);
-      
       const response = await axios.post(
-        fullUrl, 
+        `${API_URL}/cart`, 
         {
           blockId: item._id || item.id,
           quantity
@@ -108,12 +96,11 @@ export const CartProvider = ({ children }) => {
       }
       return false;
     } catch (error) {
-      console.error('Add to cart error:', error);
-      console.error('Request config:', error.config);
       handleApiError(error);
       return false;
     }
   };
+
 
   const removeFromCart = async (itemId) => {
     if (!itemId) {
@@ -131,12 +118,8 @@ export const CartProvider = ({ children }) => {
         return false;
       }
   
-      // Ensure we're using the full API URL with /api/cart
-      const fullUrl = `${API_URL}/cart/${blockId}`;
-      console.log('Removing from cart at URL:', fullUrl);
-      
       const response = await axios.delete(
-        fullUrl, 
+        `${API_URL}/cart/${blockId}`, 
         getAuthHeader()
       );
       
@@ -149,8 +132,6 @@ export const CartProvider = ({ children }) => {
       }
       return false;
     } catch (error) {
-      console.error('Remove from cart error:', error);
-      console.error('Request config:', error.config);
       if (error.response?.status === 404) {
         const updatedItems = cartItems.filter(item => 
           (item._id !== itemId && item.id !== itemId)
@@ -200,12 +181,8 @@ export const CartProvider = ({ children }) => {
       // Ensure we extract the correct block ID
       const blockId = cartItem.block?._id || cartItem.block || cartItem._id;
   
-      // Ensure we're using the full API URL with /api/cart
-      const fullUrl = `${API_URL}/cart/${blockId}`;
-      console.log('Updating cart at URL:', fullUrl);
-      
       const response = await axios.put(
-        fullUrl,
+        `${API_URL}/cart/${blockId}`,
         { quantity },
         getAuthHeader()
       );
@@ -219,22 +196,17 @@ export const CartProvider = ({ children }) => {
       }
       return false;
     } catch (error) {
-      console.error('Update quantity error:', error);
-      console.error('Request config:', error.config);
       handleApiError(error);
       return false;
     }
   };
 
+
   const clearCart = async () => {
     try {
       setError(null);
-      // Ensure we're using the full API URL with /api/cart
-      const fullUrl = `${API_URL}/cart`;
-      console.log('Clearing cart at URL:', fullUrl);
-      
       const response = await axios.delete(
-        fullUrl, 
+        `${API_URL}/cart`, 
         getAuthHeader()
       );
       
@@ -246,8 +218,6 @@ export const CartProvider = ({ children }) => {
       }
       return false;
     } catch (error) {
-      console.error('Clear cart error:', error);
-      console.error('Request config:', error.config);
       setCartItems([]);
       localStorage.removeItem('cartItems');
       handleApiError(error);
