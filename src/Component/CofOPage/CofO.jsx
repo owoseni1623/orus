@@ -167,13 +167,40 @@ const COFOPage = () => {
     // Create FormData object
     const formDataToSend = new FormData();
     
-    // Append all form fields
-    for (const [key, value] of Object.entries(formData)) {
-      formDataToSend.append(key, value);
+    // Map the specific property type to general category for backend validation
+    let generalPropertyType;
+    
+    // Extract the general property type category based on selected specific type
+    if (formData.propertyType.includes('residential') || 
+        formData.propertyType === 'single_family' || 
+        formData.propertyType === 'apartment' || 
+        formData.propertyType === 'duplex' || 
+        formData.propertyType === 'townhouse') {
+      generalPropertyType = 'residential';
+    } else if (formData.propertyType.includes('commercial') || 
+              formData.propertyType === 'office' || 
+              formData.propertyType === 'retail' || 
+              formData.propertyType === 'shopping_center') {
+      generalPropertyType = 'commercial';
+    } else if (formData.propertyType.includes('industrial') || 
+              formData.propertyType === 'warehouse' || 
+              formData.propertyType === 'manufacturing' || 
+              formData.propertyType === 'storage') {
+      generalPropertyType = 'industrial';
+    } else {
+      generalPropertyType = 'residential'; // Default fallback
     }
     
-    // Don't try to parse the token and extract user ID here
-    // The backend will handle user identification from the auth token
+    // Append all form fields with modified property type
+    for (const [key, value] of Object.entries(formData)) {
+      if (key === 'propertyType') {
+        formDataToSend.append('propertyType', generalPropertyType);
+        // Also append the specific property type with a different field name
+        formDataToSend.append('specificPropertyType', value);
+      } else {
+        formDataToSend.append(key, value);
+      }
+    }
     
     // Append files
     files.forEach((file) => {
